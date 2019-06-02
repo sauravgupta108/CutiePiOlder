@@ -1,6 +1,7 @@
 import initialization as intlz
-
+import RPLCD as RPLCD, time
+from RPLCD import CharLCD
+import RPi.GPIO as GPIO
 
 if __name__ == "__main__":
-	if intlz.initiate():
-		print("time to start threads")
+	intlz.initiate():

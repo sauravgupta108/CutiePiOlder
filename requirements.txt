@@ -1,2 +1,3 @@
 cryptography == 2.6.1
 paho-mqtt == 1.4.0
+RPLCD
