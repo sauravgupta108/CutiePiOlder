@@ -9,12 +9,14 @@ class SignalTransmission:
 	get message >> encrypt >> send
 	"""
 	def __init__(self):
-		client = CloudClient("send_msg", "SEND")
+		self.client = CloudClient("send_msg", "SEND")
 
 	def send_signal(self, raw_signal):
 		'''encrypt'''
 		# log Preparing to send signal
-		from ..helper import endrypt
-		encrypted_msg = endrypt.HideAndSeek().encrypt(raw_signal)
+		from helper import HideAndSeek
+		print(raw_signal)
+		encrypted_msg = HideAndSeek().encrypt(raw_signal)
+		print(encrypted_msg)
 		# log message encrypted
-		client.transmit(encrypted_msg)
+		self.client.transmit(encrypted_msg)

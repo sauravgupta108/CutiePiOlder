@@ -2,6 +2,9 @@ import threading
 import json 
 import time
 from paho.mqtt import client as mqtt
+import logging
+import os
+from datetime import datetime
 
 from libraries.mqtt_engine import Mqtt_Client
 
@@ -17,13 +20,22 @@ class CloudClient(threading.Thread):
 		else:
 			self._client_type = client_type
 
-	def set_channel():
+		self.logger = logging.getLogger(__name__)
+		self.logger.setLevel(logging.DEBUG)
+		handler = logging.FileHandler(os.path.join(os.environ["CUTIE_LOG"], cloud, datetime.today().strftime('%Y-%m-%d')+".log"))
+		formatter = logging.Formatter("%(asctime)s — %(levelname)s — %(message)s")
+		handler.setFormatter(formatter)
+
+		self.logger.addHandler(handler)
+
+	def set_channel(self):
 		with open('/opt/app/arduino_app/CutiePi/secret/security.json') as scrt:
 			content = json.loads(scrt.read())
 			if self._client_type == 'SEND':
 				self._channel = content['tranmission_channel']
 			else:
 				self._channel = content['reception_channel']
+			self.logger("Cloud Channel set.")
 
 	def transmit(self, signal = ""):
 		self.set_channel()

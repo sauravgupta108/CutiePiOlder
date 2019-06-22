@@ -4,4 +4,4 @@ from RPLCD import CharLCD
 import RPi.GPIO as GPIO
 
 if __name__ == "__main__":
-	intlz.initiate():
+	intlz.initiate()

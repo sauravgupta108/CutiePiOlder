@@ -14,14 +14,14 @@ class Mqtt_Client:
 		self._sub_msgs = []
 		self._qos = 0
 
-		self.logger = logging.getLogger(__name__)
+		# self.logger = logging.getLogger(__name__)
 
-		file_logger = logging.FileHandler("<< >>")		
-		log_formatter = logging.Formatter("%(asctime)s — %(name)s — %(levelname)s — %(message)s")
-		file_logger.setFormatter(log_formatter)
+		# file_logger = logging.FileHandler("<< >>")		
+		# log_formatter = logging.Formatter("%(asctime)s — %(name)s — %(levelname)s — %(message)s")
+		# file_logger.setFormatter(log_formatter)
 		
-		logger.addHandler(file_logger)
-		logger.setLevel(logging.DEBUG)
+		# self.logger.addHandler(file_logger)
+		# self.logger.setLevel(logging.DEBUG)
 
 
 	def on_connect(self, client, userdata, flags, rc):
@@ -34,9 +34,9 @@ class Mqtt_Client:
 		self.mqtt_client.loop_stop()
 		self._connection_ok = False
 
-	def on_log(self, client, userdata, level, buf):		
+	# def on_log(self, client, userdata, level, buf):		
 		# log to file
-		self.logger.debug(buf)
+		# self.logger.debug(buf)
 
 	def on_publish(self, client, userdata, mid):
 		self._pub_result = True
@@ -51,7 +51,7 @@ class Mqtt_Client:
 	def get_connection_details(self):
 		connection = None
 		try:
-			# path = os.getcwd()
+			path = "/opt/app/arduino_app/CutiePi/"
 			with open(os.path.join(path,'config/mqtt_config.json'), "r") as config_file:
 				connection = json.load(config_file)
 				self._qos = int(connection["qos"])
