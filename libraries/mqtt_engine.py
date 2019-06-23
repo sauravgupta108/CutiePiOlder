@@ -2,7 +2,8 @@
 import json
 import time
 import os
-import logging
+
+from helper import get_logger
 
 class Mqtt_Client:
 
@@ -14,15 +15,7 @@ class Mqtt_Client:
 		self._sub_msgs = []
 		self._qos = 0
 
-		# self.logger = logging.getLogger(__name__)
-
-		# file_logger = logging.FileHandler("<< >>")		
-		# log_formatter = logging.Formatter("%(asctime)s — %(name)s — %(levelname)s — %(message)s")
-		# file_logger.setFormatter(log_formatter)
-		
-		# self.logger.addHandler(file_logger)
-		# self.logger.setLevel(logging.DEBUG)
-
+		self.logger = get_logger(name=__name__, _type="mqtt")
 
 	def on_connect(self, client, userdata, flags, rc):
 		if rc != 0:
@@ -34,19 +27,22 @@ class Mqtt_Client:
 		self.mqtt_client.loop_stop()
 		self._connection_ok = False
 
-	# def on_log(self, client, userdata, level, buf):		
-		# log to file
-		# self.logger.debug(buf)
+	def on_log(self, client, userdata, level, buf):		
+		self.logger.debug(buf)
 
 	def on_publish(self, client, userdata, mid):
 		self._pub_result = True
 	
 	def on_subscribe(self, client, userdata, mid, granted_qos):
 		self._sub_result = True
+		self.logger("Ready to Recieve Signal")
 
 	def on_message(self, client, userdata, message):
-		time.sleep(0.3)
+		logger = get_logger(_type="cloud_rx", name=__name__)
+		time.sleep(0.1)
+		logger.info("Signal Recieved........")
 		self._sub_msgs.append(str(message.payload))
+		logger.info("Signal Processed Successfully")
 
 	def get_connection_details(self):
 		connection = None
@@ -56,7 +52,8 @@ class Mqtt_Client:
 				connection = json.load(config_file)
 				self._qos = int(connection["qos"])
 				return connection
-		except:
+		except Exception as e:
+			self.logger.exception("Error in getting Broker details")
 			raise RuntimeError("Could not get Broker details.")		
 			
 	def connect_target(self):
@@ -76,8 +73,9 @@ class Mqtt_Client:
 			self.mqtt_client.connect(connection_details['HOST'], 
 									 connection_details['PORT'], 
 									 connection_details['keepalive'])
-		except:		
+		except Exception as e:		
 			# del self.mqtt_client
+			self.logger.exception("Error in connection...!!!")
 			raise RuntimeError("MQTT Broker connection failed.")
 		
 		time.sleep(0.2)
@@ -89,7 +87,7 @@ class Mqtt_Client:
 		time.sleep(0.5)
 		self.mqtt_client.publish(topic = topic, payload = str(message), qos = self._qos)
 		time.sleep(0.1)
-		# log message transmitted.---------------------
+		self.logger.info("Signal transmitted successfully.")
 		
 		if self._connection_ok or self._pub_result:
 			self.disconnect_from_broker()
@@ -99,6 +97,7 @@ class Mqtt_Client:
 		try:
 			self.mqtt_client.subscribe(channel, qos = self._qos)
 		except:
+			self.logger.exception("Error in Recieving Signal")
 			raise RuntimeError("Unable to recieve from channel: ", channel)
 
 		self.mqtt_client.loop_forever()

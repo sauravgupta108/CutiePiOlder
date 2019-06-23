@@ -7,6 +7,7 @@ import os
 from datetime import datetime
 
 from libraries.mqtt_engine import Mqtt_Client
+from helper import get_logger
 
 
 class CloudClient(threading.Thread):
@@ -20,41 +21,39 @@ class CloudClient(threading.Thread):
 		else:
 			self._client_type = client_type
 
-		self.logger = logging.getLogger(__name__)
-		self.logger.setLevel(logging.DEBUG)
-		handler = logging.FileHandler(os.path.join(os.environ["CUTIE_LOG"], cloud, datetime.today().strftime('%Y-%m-%d')+".log"))
-		formatter = logging.Formatter("%(asctime)s — %(levelname)s — %(message)s")
-		handler.setFormatter(formatter)
-
-		self.logger.addHandler(handler)
+		self.logger = get_logger(name=__name__, _type="cloud")
 
 	def set_channel(self):
-		with open('/opt/app/arduino_app/CutiePi/secret/security.json') as scrt:
+		with open(os.environ["CUTIE_SECRET"]) as scrt:
 			content = json.loads(scrt.read())
 			if self._client_type == 'SEND':
 				self._channel = content['tranmission_channel']
 			else:
 				self._channel = content['reception_channel']
-			self.logger("Cloud Channel set.")
+			self.logger.debug("Cloud Channel set.")
 
 	def transmit(self, signal = ""):
+		self.logger.debug("Signal ready to transmit")
 		self.set_channel()
 		
 		if not signal:
 			raise ValueError("Empty Signal....!!!!")
 		else:
 			self._signal = signal
-
+		
 		threading.Thread.start(self)
 
 	def recieve(self):
+		self.logger.debug("Ready to recieve signals")
 		self.set_channel()
+
 		threading.Thread.start(self)
 
 	def run(self):
 		if self._client_type == 'SEND':
 			'''This part runs the mqtt client (Thread) as Publisher.'''
 			self._CLOUD_CLIENT.transmit_signal(self._channel, self._signal)
+			self.logger("Signal Transmitted Successfully.")
 			
 		else:
 			'''This part runs the mqtt client (Thread) as Subscriber.'''

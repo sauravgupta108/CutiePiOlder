@@ -2,22 +2,29 @@ import RPi.GPIO as GPIO
 
 import json
 import time
+import os
+
+from helper import get_logger
 
 
 class LCDEngine:
 	def __init__(self):
-		with open("/opt/app/arduino_app/CutiePi/config/lcd_connection.json") as lcd_conn:
-			self.__lcd = json.load(lcd_conn)
+		self.logger = get_logger(_type="lcd", name=__name__)
+		with open(os.environ["LCD_CONF"]) as lcd_conn:
+			self.__lcd = json.load(lcd_conn)			
 
+		self.logger.info("LCD configurations loaded successfully.")
 		self.prepare_lcd()
 
 	def prepare_lcd(self):		
 		for pin in self.__lcd.keys():
 			GPIO.setup(int(self.__lcd[pin]), GPIO.OUT)
+		self.logger.info("LCD pins set.")
 		self.lcd_start()
 		self.lcd_clear()
 		self.cursor_blink()
 		self.go_to_first_line()
+		self.logger.info("LCD Ready.")
 
 	def command(self, command):
 		GPIO.output(int(self.__lcd["rs"]), False)
@@ -48,12 +55,15 @@ class LCDEngine:
 
 	def lcd_start(self):
 		self.command(0x38)
+		self.logger.info("LCD initiated.")
 
 	def lcd_clear(self):
 		self.command(0x01)
+		self.logger.info("LCD Screen Clear")
 
 	def cursor_off(self):
 		self.command(0x0c)
+		self.logger.info("LCD display Cursor OFF.")
 
 	def cursor_blink(self):
 		self.command(0x0c)

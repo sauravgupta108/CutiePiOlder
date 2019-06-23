@@ -1,6 +1,7 @@
 from threading import Thread
 
 from .cloud_engine import CloudClient
+from helper import get_logger
 
 
 class SignalTransmission:
@@ -10,13 +11,11 @@ class SignalTransmission:
 	"""
 	def __init__(self):
 		self.client = CloudClient("send_msg", "SEND")
+		self.logger = get_logger(_type="cloud", name=__name__)
 
-	def send_signal(self, raw_signal):
-		'''encrypt'''
-		# log Preparing to send signal
+	def send_signal(self, raw_signal):		
 		from helper import HideAndSeek
-		print(raw_signal)
 		encrypted_msg = HideAndSeek().encrypt(raw_signal)
-		print(encrypted_msg)
-		# log message encrypted
+		
+		self.logger.info("Signal Encrypted.")		
 		self.client.transmit(encrypted_msg)
