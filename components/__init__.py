@@ -1,3 +1,3 @@
 from .lcd import Lcd
-from .sevnment import Seven_Segment
+from .sevnment import SevenSegment
 from .led import Led

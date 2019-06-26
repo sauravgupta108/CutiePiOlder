@@ -23,17 +23,17 @@ class HideAndSeek:
 		"""
 		Returns secret key from configuration file
 		"""
+		# TODO: Change this o get key from env_settings.
+		# return os.environ["secret_key"]
 		secret_key = None
 		try:
 			scrt = open('/opt/app/arduino_app/CutiePi/secret/security.json', 'r')
 			secret_key = json.load(scrt)["secret_key"]		
 		
-		except FileNotFoundError: 
-			# TODO: log error
+		except FileNotFoundError:
 			secret_key = None
 			
 		except Exception as e:
-			# TODO: log error
 			secret_key = None
 					
 		finally:

@@ -4,7 +4,7 @@ from helper import get_logger
 
 class SignalReception:
 	"""
-	This class recieves signals to cloud via MQTT protocol.
+	This class receives signals from via MQTT protocol.
 	"""
 	def __init__(self):
 		self.logger = get_logger(_type="cloud_rx", name=__name__)

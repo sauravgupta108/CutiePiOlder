@@ -1,2 +1,2 @@
-from .cloud_smac import ProcessReceivedCloudSignal
+from .cloud_smac import CloudSignal
 from .arduino_signal import ArduinoSignal

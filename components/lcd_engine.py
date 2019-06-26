@@ -14,7 +14,6 @@ class LCDEngine:
 			self.__lcd = json.load(lcd_conn)			
 
 		self.logger.info("LCD configurations loaded successfully.")
-		self.prepare_lcd()
 
 	def prepare_lcd(self):		
 		for pin in self.__lcd.keys():
@@ -25,6 +24,7 @@ class LCDEngine:
 		self.cursor_blink()
 		self.go_to_first_line()
 		self.logger.info("LCD Ready.")
+		return True
 
 	def command(self, command):
 		GPIO.output(int(self.__lcd["rs"]), False)

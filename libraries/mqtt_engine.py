@@ -7,7 +7,9 @@ from helper import get_logger
 
 
 class MqttClient:
-
+	"""
+	It deals with MQTT Broker directly.
+	"""
 	def __init__(self, client_mqtt):
 		self.mqtt_client = client_mqtt
 		self._connection_ok = False		
@@ -29,14 +31,14 @@ class MqttClient:
 		self._connection_ok = False
 
 	def on_log(self, client, userdata, level, buf):		
-		self.logger.debug(buf)
+		self.logger.debug("Client: %s -- %s" % client, buf)
 
 	def on_publish(self, client, userdata, mid):
 		self._pub_result = True
 	
 	def on_subscribe(self, client, userdata, mid, granted_qos):
 		self._sub_result = True
-		self.logger("Ready to Recieve Signal")
+		self.logger("Ready to receive Signal")
 
 	def on_message(self, client, userdata, message):
 		logger = get_logger(_type="cloud_rx", name=__name__)
@@ -70,7 +72,7 @@ class MqttClient:
 		self.mqtt_client.on_publish = self.on_publish
 		self.mqtt_client.on_subscribe = self.on_subscribe
 		self.mqtt_client.on_message = self.on_message
-		# self.mqtt_client.on_log = self.on_log
+		self.mqtt_client.on_log = self.on_log
 		
 		try:
 			self.mqtt_client.connect(
@@ -102,7 +104,7 @@ class MqttClient:
 			self.mqtt_client.subscribe(channel, qos=self._qos)
 		except:
 			self.logger.exception("Error in Recieving Signal")
-			raise RuntimeError("Unable to recieve from channel: ", channel)
+			raise RuntimeError("Unable to receive from channel: ", channel)
 
 		self.mqtt_client.loop_forever()
 

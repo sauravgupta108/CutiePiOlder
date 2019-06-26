@@ -1,17 +1,18 @@
-import threading
+from threading import Thread
 import json
 from paho.mqtt import client as mqtt
 import os
-
 
 from libraries.mqtt_engine import Mqtt_Client
 from helper import get_logger
 
 
-class CloudClient(threading.Thread):
-	"""This class runs MQTT Clients as Threads."""
+class CloudClient(Thread):
+	"""
+	This runs MQTT Clients as Threads.
+	"""
 	def __init__(self, name, client_type):
-		threading.Thread.__init__(self)
+		Thread.__init__(self)
 		self._CLOUD_CLIENT = Mqtt_Client(mqtt.Client(client_id=name))
 		self._signal = None
 		self._channel = None
@@ -37,26 +38,32 @@ class CloudClient(threading.Thread):
 		self.set_channel()
 		
 		if not signal:
-			raise ValueError("Empty Signal....!!!!")
+			self.logger.debug("Cloud: Invalid/null signal provided.")
+			raise ValueError("Empty Signal")
+
 		else:
 			self._signal = signal
 		
-		threading.Thread.start(self)
+		Thread.start(self)
 
-	def recieve(self):
-		self.logger.debug("Ready to recieve signals")
+	def receive(self):
+		self.logger.debug("Ready to receive signals")
 		self.set_channel()
 
-		threading.Thread.start(self)
+		Thread.start(self)
 
 	def run(self):
-		if self._client_type == 'SEND':
-			'''This part runs the mqtt client (Thread) as Publisher.'''
+		if self._client_type == "SEND":
+			"""
+			This part runs the mqtt client (Thread) as Publisher.
+			"""
 			self._CLOUD_CLIENT.transmit_signal(self._channel, self._signal)
 			self.logger("Signal Transmitted Successfully.")
 			
-		else:
-			'''This part runs the mqtt client (Thread) as Subscriber.'''
+		elif self._client_type == "RECEIVE":
+			"""
+			This part runs the mqtt client (Thread) as Subscriber.
+			"""
 			self._CLOUD_CLIENT.receive_signal(self._channel)
 
 	def is_published(self):

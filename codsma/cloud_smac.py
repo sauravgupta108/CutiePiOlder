@@ -5,7 +5,7 @@ from helper import get_logger
 from .arduino_signal import ArduinoSignal
 
 
-class ProcessReceivedCloudSignal:
+class CloudSignal:
 	def __init__(self):
 		self.logger = get_logger(_type="cloud_rx", name=__name__)
 
@@ -31,7 +31,7 @@ class ProcessReceivedCloudSignal:
 		
 		if msg_parts[0] != msg_specs["source"]:
 			self.logger.error("Invalid Signal %s" % signal)
-			raise ValueError("Invalid Signal Recieved")
+			raise ValueError("Invalid Signal received")
 			# TODO: Handle this signal error in caller's home.
 		elif len(msg_parts) < 3:
 			self.logger.error("Invalid Signal Format %s" % signal)
