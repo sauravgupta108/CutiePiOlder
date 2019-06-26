@@ -5,7 +5,8 @@ import os
 
 from helper import get_logger
 
-class Mqtt_Client:
+
+class MqttClient:
 
 	def __init__(self, client_mqtt):
 		self.mqtt_client = client_mqtt
@@ -40,15 +41,14 @@ class Mqtt_Client:
 	def on_message(self, client, userdata, message):
 		logger = get_logger(_type="cloud_rx", name=__name__)
 		time.sleep(0.1)
-		logger.info("Signal Recieved........")
+		logger.info("Signal Received........")
 		self._sub_msgs.append(str(message.payload))
 		logger.info("Signal Processed Successfully")
 
 	def get_connection_details(self):
-		connection = None
 		try:
 			path = "/opt/app/arduino_app/CutiePi/"
-			with open(os.path.join(path,'config/mqtt_config.json'), "r") as config_file:
+			with open(os.path.join(path, 'config/mqtt_config.json'), "r") as config_file:
 				connection = json.load(config_file)
 				self._qos = int(connection["qos"])
 				return connection
@@ -57,7 +57,10 @@ class Mqtt_Client:
 			raise RuntimeError("Could not get Broker details.")		
 			
 	def connect_target(self):
-		'''Connects to MQTT broker and returns a MQTT Client object.'''
+		"""
+		Connects to MQTT broker and returns a MQTT Client object.
+		"""
+
 		connection_details = self.get_connection_details()
 
 		self.mqtt_client.username_pw_set(connection_details['USERNAME'], connection_details['PASSWORD'])
@@ -70,9 +73,10 @@ class Mqtt_Client:
 		# self.mqtt_client.on_log = self.on_log
 		
 		try:
-			self.mqtt_client.connect(connection_details['HOST'], 
-									 connection_details['PORT'], 
-									 connection_details['keepalive'])
+			self.mqtt_client.connect(
+				connection_details['HOST'],
+				connection_details['PORT'],
+				connection_details['keepalive'])
 		except Exception as e:		
 			# del self.mqtt_client
 			self.logger.exception("Error in connection...!!!")
@@ -85,7 +89,7 @@ class Mqtt_Client:
 		
 		self.mqtt_client.loop_start()
 		time.sleep(0.5)
-		self.mqtt_client.publish(topic = topic, payload = str(message), qos = self._qos)
+		self.mqtt_client.publish(topic=topic, payload=str(message), qos=self._qos)
 		time.sleep(0.1)
 		self.logger.info("Signal transmitted successfully.")
 		
@@ -95,7 +99,7 @@ class Mqtt_Client:
 	def receive_signal(self, channel):
 		self.connect_target()
 		try:
-			self.mqtt_client.subscribe(channel, qos = self._qos)
+			self.mqtt_client.subscribe(channel, qos=self._qos)
 		except:
 			self.logger.exception("Error in Recieving Signal")
 			raise RuntimeError("Unable to recieve from channel: ", channel)

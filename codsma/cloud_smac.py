@@ -2,23 +2,23 @@ import os
 import json
 
 from helper import get_logger
-from .arduino_signal_generator import ArduinoSignalGenerator
+from .arduino_signal import ArduinoSignal
 
 
-class ProcessRecievedCloudSignal:
+class ProcessReceivedCloudSignal:
 	def __init__(self):
 		self.logger = get_logger(_type="cloud_rx", name=__name__)
 
-	def pocess_signal(self, signal):
+	def process_signal(self, signal):
 		self.logger.info("Signal Processing Start.")
 		msg = self.divide_message(signal)
-		arduino_signal = ArduinoSignalGenerator().generate_ard_signal()
+		arduino_signal = ArduinoSignal().generate_signal(msg)
 		if arduino_signal:
-			self.get_logger.info("Signal Processed Successfully.")
+			self.logger.info("Signal Processed Successfully.")
 			# TODO: Send arduino signal for further processing
 			return True
 		else:
-			self.get_logger.error("Recieved Signal Processing Failed.")
+			self.logger.error("Received Signal Processing Failed.")
 			return False
 
 	def divide_message(self, signal):

@@ -2,7 +2,7 @@ from components import Lcd
 from components import Seven_Segment
 from components import Led
 from cloud import SignalTransmission
-import RPi.GPIO as GPIO
+
 
 def initiate():
 	# led_start = Led().initiate()

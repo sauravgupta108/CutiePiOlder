@@ -2,10 +2,11 @@ from cryptography.fernet import Fernet
 import os
 import json
 
+
 class HideAndSeek:
-	'''
+	"""
 	This class encrypts or decrypts signals
-	'''
+	"""
 
 	def __init__(self):
 		pass
@@ -19,9 +20,9 @@ class HideAndSeek:
 		return Fernet(self.get_key()).decrypt(signal).decode()
 
 	def get_key(self):
-		'''
+		"""
 		Returns secret key from configuration file
-		'''
+		"""
 		secret_key = None
 		try:
 			scrt = open('/opt/app/arduino_app/CutiePi/secret/security.json', 'r')

@@ -11,7 +11,7 @@ class Lcd(LCDEngine):
 		toggle_line = 0
 		for i in range(len(message)):
 			self.print(message[i])
-			toggle_line+=1
+			toggle_line += 1
 			if toggle_line == 16:
 				self.command(0xC0)
 			elif toggle_line == 32:

@@ -31,10 +31,10 @@ class LCDEngine:
 		self.write_8_bit_mode(bin(command))
 		self.green_signal()
 
-	def print(self, chr):
-		assert len(chr) == 1
+	def print(self, char):
+		assert len(char) == 1
 		GPIO.output(int(self.__lcd["rs"]), True)
-		self.write_8_bit_mode(bin(ord(chr)))
+		self.write_8_bit_mode(bin(ord(char)))
 		self.green_signal()
 
 	def write_8_bit_mode(self, bits):		
@@ -43,7 +43,8 @@ class LCDEngine:
 		for i in range(8):
 			GPIO.output(int(self.__lcd["d" + str(i)]), bool(int(bits[i])))
 
-	def pad_bits(self, bits):
+	@staticmethod
+	def pad_bits(bits):
 		raw_bits = bits.lstrip('0b')
 		assert (8-len(raw_bits)) >= 0
 		return '0'*(8-len(raw_bits)) + raw_bits
@@ -81,10 +82,11 @@ class LCDEngine:
 		self.command(0xc0)
 
 	def go_to_position(self, row=1, column=1):
-		assert row in [1,2]
-		assert column in range(1,17)
+		assert row in [1, 2]
+		assert column in range(1, 17)
 		# TODO: add logic for this.
 		pass
 
-	def clean(self):
+	@staticmethod
+	def clean():
 		GPIO.cleanup()

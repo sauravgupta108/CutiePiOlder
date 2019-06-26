@@ -2,6 +2,7 @@ import os
 import logging
 from datetime import datetime
 
+
 def get_logger(_type, name="default"):
 	logger = logging.getLogger(name)
 	logger.setLevel(logging.DEBUG)
