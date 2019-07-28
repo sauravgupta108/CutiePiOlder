@@ -1,7 +1,8 @@
 {
-	"hc05":[{
+	"hc05":{
 		"name": "HC-05",
 		"device_id": "98:D3:36:80:F3:72",
-		"port": 1
-	}]
+		"port": 1,
+		"signal_len": 10
+	}
 }
